@@ -43,6 +43,29 @@ from so101_nexus.objects import CubeObject
 
 from molmoact2_so101_sim import realism
 
+import gymnasium as gym
+
+class EncoderOffset(gym.Wrapper):
+    """delta: radians per arm joint (gripper untouched)."""
+    def __init__(self, env, delta):
+        super().__init__(env)
+        self.delta = np.asarray(delta, dtype=np.float64)
+        self.n = len(self.delta)
+
+    def action(self, a):
+        a = np.array(a, dtype=np.float64)
+        a[: self.n] += self.delta
+        lo, hi = self.env.action_space.low, self.env.action_space.high
+        return np.clip(a, lo, hi).astype(np.float32)
+
+    def reported_qpos(self):
+        q = np.array(self.env.unwrapped._get_current_qpos(), dtype=np.float64)
+        q[: self.n] -= self.delta
+        return q
+
+    def step(self, a):
+        return self.env.step(self.action(a))
+    
 HALF = 0.015
 SUB = 6
 JS = np.array([1., -1., 1., 1., 1., 1.])
@@ -99,7 +122,7 @@ realism.set_camera(env, "front_low")
 model, data = U.model, U.data
 lo, hi = env.action_space.low, env.action_space.high
 # Same grip-friendly contact params as collection.
-for gid in set(U._gripper_geom_ids) | set(U._jaw_geom_ids) | {U._obj_geom_id}:
+for gid in set(U._gripper_geom_ids) | set(U._jaw_geom_ids) | set(U._obj_geom_ids):
     f = model.geom_friction[gid].copy()
     model.geom_friction[gid] = [max(f[0], 1.2), max(f[1] * 10, 0.05), max(f[2] * 10, 0.01)]
 
@@ -190,6 +213,8 @@ def parse_seeds(s):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--fault-deg", type=float, default=0.0, 
+                help="Inject encoder-link offset on joints 1, 2, and 4 (degrees)")
     ap.add_argument("--policy", required=True, help="'zeroshot' or a checkpoint pretrained_model dir")
     ap.add_argument("--dataset-root", default="data/cube500",
                     help="a collected dataset dir; zero-shot needs its stats for normalization")
@@ -207,6 +232,11 @@ def main():
                     help="override checkpoint control_mode, e.g. 'delta joint pose'")
     ap.add_argument("--n-action-steps", type=int, default=10, help="closed-loop re-query interval")
     args = ap.parse_args()
+    
+    global env
+    deg = np.deg2rad(args.fault_deg)
+    delta_array = np.array([0.0, deg, deg, 0.0, deg, 0.0])
+    env = EncoderOffset(env, delta_array)
 
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
