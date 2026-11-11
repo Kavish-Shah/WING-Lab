@@ -11,8 +11,8 @@ python3 eval/eval_policy.py \
     --policy ./lora_champion \
     --dataset-root data/cube500_bin \
     --dataset-repo-id local/cube500_bin \
-    --seeds 5000-5250 \
-    --min-reach 0.23 --max-reach 0.27 --count 30 \
+    --seeds 5000-5099 \
+    --max-reach 0.27 --count 30 \
     --max-pol 360 \
     --fault-deg 0.0 \
     --tag baseline_0deg 2>&1 | tee eval_out/baseline_0deg.log
@@ -25,8 +25,8 @@ for joint in shoulder_lift elbow_flex wrist_flex; do
             --policy ./lora_champion \
             --dataset-root data/cube500_bin \
             --dataset-repo-id local/cube500_bin \
-            --seeds 5000-5250 \
-            --min-reach 0.23 --max-reach 0.27 --count 30 \
+            --seeds 5000-5099 \
+            --max-reach 0.27 --count 30 \
             --max-pol 360 \
             --fault-joint "$joint" \
             --fault-deg "$deg" \

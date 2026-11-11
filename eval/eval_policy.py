@@ -168,7 +168,7 @@ def act_to_sim(a):
     return np.clip(np.concatenate([arm, [grip]]).astype(np.float32), lo, hi)
 
 
-def rollout(pol, pre, post, seed, frames=None, max_pol=360, delta=False, min_reach=0.23, max_reach=0.27):
+def rollout(pol, pre, post, seed, frames=None, max_pol=360, delta=False, min_reach=0.0, max_reach=0.27):
     torch.manual_seed(1000)
     torch.cuda.manual_seed_all(1000)
     obs, _ = env.reset(seed=seed)
@@ -178,7 +178,7 @@ def rollout(pol, pre, post, seed, frames=None, max_pol=360, delta=False, min_rea
         pol._rollout_index_for_task = -1
         pol._rollout_task_key = None
     r_obj = float(np.hypot(*objp()[:2]))
-    if r_obj > max_reach or r_obj < min_reach:          # skip out of reach/envelope
+    if r_obj > max_reach or (min_reach > 0.0 and r_obj < min_reach):          # skip out of reach/envelope
         return None
     grasped = False
     lifted = 0.0
@@ -250,7 +250,7 @@ def main():
     ap.add_argument('--control-mode', default=None,
                     help="override checkpoint control_mode, e.g. 'delta joint pose'")
     ap.add_argument('--n-action-steps', type=int, default=10, help='closed-loop re-query interval')
-    ap.add_argument('--min-reach', type=float, default=0.23, help='minimum cube reach distance')
+    ap.add_argument('--min-reach', type=float, default=0.0, help='minimum cube reach distance')
     ap.add_argument('--max-reach', type=float, default=0.27, help='maximum cube reach distance')
     ap.add_argument('--count', type=int, default=30, help='number of episodes to score')
     args = ap.parse_args()
