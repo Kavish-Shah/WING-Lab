@@ -2,221 +2,221 @@
   "summary": {
     "tag": "baseline_0deg",
     "n": 30,
-    "grasp": 12,
-    "lift": 12,
+    "grasp": 16,
+    "lift": 16,
     "succ": 5,
-    "released_6cm": 6,
-    "loose": 6
+    "released_6cm": 5,
+    "loose": 5
   },
   "per": [
     {
       "grasp": false,
-      "lift": 0.01137869220918514,
+      "lift": 0.005786630544681721,
       "succ": false,
-      "otd": 0.2506268109468749,
+      "otd": 0.2848846146767246,
       "end_grasped": false
     },
     {
-      "grasp": true,
-      "lift": 0.060029965887166026,
+      "grasp": false,
+      "lift": 0.009992992419724116,
       "succ": true,
-      "otd": 0.024919899712018544,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.0035012591107238793,
-      "succ": false,
-      "otd": 0.2934957979981646,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.006391695057051089,
-      "succ": false,
-      "otd": 0.3043521284639749,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.0028883213640328864,
-      "succ": false,
-      "otd": 0.20155100178081742,
+      "otd": 0.01270980516584211,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.10663778730845559,
+      "lift": 0.10984109937119216,
       "succ": true,
-      "otd": 0.020696257702359704,
+      "otd": 0.02109836068802955,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.1470979289793443,
+      "lift": 0.0820001789918064,
       "succ": false,
-      "otd": 0.039465268466432855,
+      "otd": 0.3364772206840218,
       "end_grasped": false
     },
     {
       "grasp": false,
-      "lift": 0.003520900154544192,
+      "lift": 0.005980249264811905,
       "succ": false,
-      "otd": 0.16229630146627866,
+      "otd": 0.12335787076162368,
       "end_grasped": false
     },
     {
       "grasp": false,
-      "lift": 0.006271988448964157,
+      "lift": 0.010519375178224145,
       "succ": false,
-      "otd": 0.11545109526624407,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.00788137336173583,
-      "succ": false,
-      "otd": 0.19770323230440248,
+      "otd": 0.17848176608425603,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.12351946751630806,
+      "lift": 0.12572096081254244,
       "succ": true,
-      "otd": 0.017057039294229262,
+      "otd": 0.0196439552738314,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.10452191354998315,
+      "lift": 0.10536574629642942,
+      "succ": false,
+      "otd": 0.11810261155311096,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.11567106710928808,
+      "succ": false,
+      "otd": 0.10197525920843535,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 0.008439543638970618,
+      "succ": false,
+      "otd": 0.237639917269629,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.12178678104690506,
+      "succ": false,
+      "otd": 0.41323210393989185,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.08732522023757813,
+      "succ": false,
+      "otd": 0.2713607214512384,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.1286467944395467,
       "succ": true,
-      "otd": 0.021263311052161872,
+      "otd": 0.020297691354209092,
       "end_grasped": false
     },
     {
       "grasp": false,
-      "lift": 0.008478900448332709,
+      "lift": 0.010630511759106872,
       "succ": false,
-      "otd": 0.2772605307818828,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 3.931736170928457e-06,
-      "succ": false,
-      "otd": 0.22622738027884187,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.004578283597388478,
-      "succ": false,
-      "otd": 0.1830435884307227,
+      "otd": 0.09403616303783464,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.05023540860533608,
+      "lift": 0.09627085859187798,
       "succ": false,
-      "otd": 0.23385989054963377,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.005250996265259102,
-      "succ": false,
-      "otd": 0.21417374640940265,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.0057099987245004796,
-      "succ": false,
-      "otd": 0.25862157353153087,
+      "otd": 0.19558309177381955,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.05668645858907387,
-      "succ": false,
-      "otd": 0.37809643748457467,
-      "end_grasped": false
-    },
-    {
-      "grasp": true,
-      "lift": 0.07528880611904952,
-      "succ": false,
-      "otd": 0.22249602327184076,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.006666435392201285,
-      "succ": false,
-      "otd": 0.14259444797282658,
-      "end_grasped": false
-    },
-    {
-      "grasp": true,
-      "lift": 0.12543742387386075,
+      "lift": 0.10548683201363926,
       "succ": true,
-      "otd": 0.014371104146857817,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.010908991401206753,
-      "succ": false,
-      "otd": 0.11922766761889542,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.004585280473024145,
-      "succ": false,
-      "otd": 0.34184954620622965,
-      "end_grasped": false
-    },
-    {
-      "grasp": false,
-      "lift": 0.010490489103307896,
-      "succ": false,
-      "otd": 0.3494437500244048,
+      "otd": 0.008428126829615584,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.09376560778210595,
+      "lift": 0.0927155083441821,
       "succ": false,
-      "otd": 0.31494049417631587,
+      "otd": 0.09316155470634299,
       "end_grasped": false
     },
     {
       "grasp": false,
-      "lift": 0.00393271462341967,
+      "lift": 0.005030888177952851,
       "succ": false,
-      "otd": 0.3075808680234023,
+      "otd": 0.0829015316451494,
       "end_grasped": false
     },
     {
       "grasp": true,
-      "lift": 0.08814699126499592,
+      "lift": 0.10845007545357786,
       "succ": false,
-      "otd": 0.328444796842952,
-      "end_grasped": false
-    },
-    {
-      "grasp": true,
-      "lift": 0.12775039582086675,
-      "succ": false,
-      "otd": 0.0808428896697147,
+      "otd": 0.47049377494652034,
       "end_grasped": false
     },
     {
       "grasp": false,
-      "lift": 0.006151611326702149,
+      "lift": 0.004125136911614844,
       "succ": false,
-      "otd": 0.21787558174419805,
+      "otd": 0.2982910193908324,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 0.0061998708351943006,
+      "succ": false,
+      "otd": 0.24523201580113876,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 0.01582151306925103,
+      "succ": false,
+      "otd": 0.10280439089098,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 0.006886435824231853,
+      "succ": false,
+      "otd": 0.16254492954070396,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.11353011189096258,
+      "succ": false,
+      "otd": 0.08710023565706573,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 0.007079470126462668,
+      "succ": false,
+      "otd": 0.18856155317034032,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 0.006224043370624183,
+      "succ": false,
+      "otd": 0.08057037455294935,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.07700932198778575,
+      "succ": false,
+      "otd": 0.09849548100334422,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.0998872760097542,
+      "succ": false,
+      "otd": 0.1572094725295766,
+      "end_grasped": false
+    },
+    {
+      "grasp": true,
+      "lift": 0.08443387563321922,
+      "succ": false,
+      "otd": 0.23080995704946905,
+      "end_grasped": false
+    },
+    {
+      "grasp": false,
+      "lift": 3.931740804033121e-06,
+      "succ": false,
+      "otd": 0.11901094829250694,
       "end_grasped": false
     }
   ]
