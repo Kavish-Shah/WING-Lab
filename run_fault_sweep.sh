@@ -3,7 +3,7 @@ set -e
 cd "$(dirname "$0")"
 export PYTHONPATH=.
 export MUJOCO_GL=egl
-export HF_HOME=${HF_HOME:-/workspace/.cache/huggingface}
+export HF_HOME=${HF_HOME:-/root/.cache/huggingface}
 mkdir -p eval_out
 
 echo "=== 1. Checking Baseline (delta=0) ==="
