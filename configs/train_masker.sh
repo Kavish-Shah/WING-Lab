@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Train the Self-Adaptive VLA Masker policies (Week 3-5).
 # Trains LoRA on MolmoAct2 VLM vision backbone + full action expert on relabeled data.
-# Fits a 24 GB GPU (RTX 4090 or RTX 3090).
+# Optimized for 24 GB GPUs (RTX 3090 / RTX 4090) with batch_size=4 x 2 grad accum = 8.
 #
 # Usage:
 #   bash configs/train_masker.sh 2deg   # Weak Masker (+/- 2 deg)
@@ -9,6 +9,8 @@
 #   bash configs/train_masker.sh 10deg  # Strong Masker (+/- 10 deg)
 #   bash configs/train_masker.sh all    # Train all 3 sequentially
 set -euo pipefail
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 TIER=${1:-2deg}
 STEPS=${STEPS:-4000}
@@ -50,9 +52,10 @@ train_tier() {
       --job_name="masker_${t}" \
       --output_dir="$OUT_DIR" \
       --steps="$STEPS" \
-      --batch_size=8 \
+      --batch_size=4 \
+      --accelerator.gradient_accumulation.steps=2 \
       --num_workers=4 \
-      --log_freq=100 \
+      --log_freq=50 \
       --save_checkpoint=true \
       --save_freq="$STEPS"
 
