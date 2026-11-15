@@ -29,12 +29,11 @@ from lerobot.policies import make_pre_post_processors
 from lerobot.policies.factory import make_policy, make_policy_config
 from lerobot.policies.molmoact2.modeling_molmoact2 import MolmoAct2Policy
 
-# Match champion training setup where lm_head was not in LoRA targets
-orig_lora_target = MolmoAct2Policy._lora_target_modules
-def _custom_lora_target_modules(self, *, prefix: str, lm_head_path: str) -> str:
+# Store original LoRA target module resolver
+_orig_lora_target_modules = MolmoAct2Policy._lora_target_modules
+def _champion_lora_target_modules(self, *, prefix: str, lm_head_path: str) -> str:
     vlm_linear_leaves = 'w1|w2|w3|wq|wk|wv|wo|att_proj|attn_out|ff_proj|ff_out|patch_embedding'
     return rf'(?:{prefix}\.(transformer|vision_backbone|image_pooling_2d|image_projector)\.(?:.*\.)?({vlm_linear_leaves}))$'
-MolmoAct2Policy._lora_target_modules = _custom_lora_target_modules
 
 from so101_nexus import OverheadCamera, WristCamera
 from so101_nexus.mujoco.pick_and_place import PickAndPlaceEnv, PickAndPlaceConfig
@@ -112,6 +111,10 @@ def build_policy(spec, meta, control_mode=None, n_action_steps=10):
         pol = make_policy(cfg, ds_meta=meta)
         pre, post = make_pre_post_processors(policy_cfg=cfg, dataset_stats=meta.stats)
     else:
+        if 'champion' in str(spec):
+            MolmoAct2Policy._lora_target_modules = _champion_lora_target_modules
+        else:
+            MolmoAct2Policy._lora_target_modules = _orig_lora_target_modules
         pol = MolmoAct2Policy.from_pretrained(spec)
         pol.config.inference_action_mode = 'continuous'   # not saved at train time
         if control_mode:
