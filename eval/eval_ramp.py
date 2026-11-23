@@ -275,7 +275,7 @@ def main():
     kin_det = KinematicResidualDetector(U.model)
 
     # Load policy
-    meta = LeRobotDatasetMetadata(args.dataset_repo_id, root=args.dataset_root)
+    meta = LeRobotDatasetMetadata(args.dataset_repo_id, root=args.dataset_root) if args.policy == 'zeroshot' else None
     print(f'Loading policy: {args.policy}')
     pol, pre, post = build_policy(args.policy, meta)
 
