@@ -6,6 +6,7 @@
 set -euo pipefail
 
 export PYTHONPATH=.
+export HF_TOKEN=${HF_TOKEN:-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}
 
 OUT_DIR="eval_out"
 EPISODES=${1:-50}
@@ -19,58 +20,48 @@ echo "Target Episodes per Ramp: $EPISODES"
 echo "Fault Joint: $JOINT (0 deg -> 8 deg)"
 echo "=========================================================="
 
+run_ramp() {
+  local POLICY=$1
+  local TAG=$2
+  if [ -f "$OUT_DIR/ramp_${TAG}_summary.json" ]; then
+    echo ">>> [$TAG] $OUT_DIR/ramp_${TAG}_summary.json already exists! Skipping to next... <<<"
+  else
+    echo ">>> Running $EPISODES-Episode Ramp on $TAG ($POLICY)... <<<"
+    python3 eval/eval_ramp.py \
+      --policy "$POLICY" \
+      --episodes "$EPISODES" \
+      --fault-joint "$JOINT" \
+      --start-deg 0.0 \
+      --max-deg 8.0 \
+      --tag "$TAG" \
+      --out-dir "$OUT_DIR"
+  fi
+}
+
 # 1. Baseline Policy Ramp (Unadapted Champion)
-echo ">>> [1/4] Running $EPISODES-Episode Ramp on Baseline Policy (ataghof/molmoact2-so101nexus-lora-champion)..."
-python3 eval/eval_ramp.py \
-  --policy ataghof/molmoact2-so101nexus-lora-champion \
-  --episodes "$EPISODES" \
-  --fault-joint "$JOINT" \
-  --start-deg 0.0 \
-  --max-deg 8.0 \
-  --tag baseline \
-  --out-dir "$OUT_DIR"
+run_ramp "ataghof/molmoact2-so101nexus-lora-champion" "baseline"
 
 # 2. Weak Masker (2deg) Ramp
-echo ">>> [2/4] Running $EPISODES-Episode Ramp on Weak Masker (2deg)..."
-python3 eval/eval_ramp.py \
-  --policy kvshah/molmoact2-so101-masker-2deg \
-  --episodes "$EPISODES" \
-  --fault-joint "$JOINT" \
-  --start-deg 0.0 \
-  --max-deg 8.0 \
-  --tag masker_2deg \
-  --out-dir "$OUT_DIR"
+run_ramp "kvshah/molmoact2-so101-masker-2deg" "masker_2deg"
 
 # 3. Medium Masker (5deg) Ramp
-echo ">>> [3/4] Running $EPISODES-Episode Ramp on Medium Masker (5deg)..."
-python3 eval/eval_ramp.py \
-  --policy kvshah/molmoact2-so101-masker-5deg \
-  --episodes "$EPISODES" \
-  --fault-joint "$JOINT" \
-  --start-deg 0.0 \
-  --max-deg 8.0 \
-  --tag masker_5deg \
-  --out-dir "$OUT_DIR"
+run_ramp "kvshah/molmoact2-so101-masker-5deg" "masker_5deg"
 
 # 4. Strong Masker (10deg) Ramp
-echo ">>> [4/4] Running $EPISODES-Episode Ramp on Strong Masker (10deg)..."
-python3 eval/eval_ramp.py \
-  --policy kvshah/molmoact2-so101-masker-10deg \
-  --episodes "$EPISODES" \
-  --fault-joint "$JOINT" \
-  --start-deg 0.0 \
-  --max-deg 8.0 \
-  --tag masker_10deg \
-  --out-dir "$OUT_DIR"
+run_ramp "kvshah/molmoact2-so101-masker-10deg" "masker_10deg"
 
 # 5. Train Activation Probe on Strong Masker
-echo ">>> [5/5] Training Latent Activation Probe on Strong Masker..."
-python3 eval/train_activation_probe.py \
-  --policy kvshah/molmoact2-so101-masker-10deg \
-  --episodes-per-fault 10 \
-  --fault-sweep "0,1,2,4,6,8" \
-  --tag probe_masker_10deg \
-  --out-dir "$OUT_DIR"
+if [ -f "$OUT_DIR/activation_probe_summary.json" ]; then
+  echo ">>> [probe_masker_10deg] Summary already exists! Skipping... <<<"
+else
+  echo ">>> [5/5] Training Latent Activation Probe on Strong Masker... <<<"
+  python3 eval/train_activation_probe.py \
+    --policy kvshah/molmoact2-so101-masker-10deg \
+    --episodes-per-fault 10 \
+    --fault-sweep "0,1,2,4,6,8" \
+    --tag probe_masker_10deg \
+    --out-dir "$OUT_DIR"
+fi
 
 echo "=========================================================="
 echo ">>> ALL WEEKS 5-6 EVALUATIONS COMPLETED SUCCESSFULLY! <<<"
