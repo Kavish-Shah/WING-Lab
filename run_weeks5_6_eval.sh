@@ -20,11 +20,29 @@ echo "Target Episodes per Ramp: $EPISODES"
 echo "Fault Joint: $JOINT (0 deg -> 8 deg)"
 echo "=========================================================="
 
+prune_hf_cache() {
+  local REPO_ID=$1
+  python3 -c "
+from huggingface_hub import scan_cache_dir
+try:
+    hf_cache_info = scan_cache_dir()
+    hashes = [rev.commit_hash for repo in hf_cache_info.repos if repo.repo_id == '$REPO_ID' for rev in repo.revisions]
+    if hashes:
+        hf_cache_info.delete_revisions(*hashes).execute()
+        print('Pruned $REPO_ID from HF cache')
+except Exception as e:
+    print('Cache prune notice:', e)
+" || true
+}
+
 run_ramp() {
   local POLICY=$1
   local TAG=$2
   if [ -f "$OUT_DIR/ramp_${TAG}_summary.json" ]; then
     echo ">>> [$TAG] $OUT_DIR/ramp_${TAG}_summary.json already exists! Skipping to next... <<<"
+    if [ "$TAG" != "masker_10deg" ]; then
+      prune_hf_cache "$POLICY"
+    fi
   else
     echo ">>> Running $EPISODES-Episode Ramp on $TAG ($POLICY)... <<<"
     python3 eval/eval_ramp.py \
@@ -35,6 +53,11 @@ run_ramp() {
       --max-deg 8.0 \
       --tag "$TAG" \
       --out-dir "$OUT_DIR"
+    
+    # Prune model weights immediately after run finishes (except 10deg which is used for probe next)
+    if [ "$TAG" != "masker_10deg" ]; then
+      prune_hf_cache "$POLICY"
+    fi
   fi
 }
 
@@ -61,6 +84,7 @@ else
     --fault-sweep "0,1,2,4,6,8" \
     --tag probe_masker_10deg \
     --out-dir "$OUT_DIR"
+  prune_hf_cache "kvshah/molmoact2-so101-masker-10deg"
 fi
 
 echo "=========================================================="
