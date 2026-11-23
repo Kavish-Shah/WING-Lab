@@ -20,6 +20,8 @@ import sys
 import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(line_buffering=True)
 
 if sys.platform == 'linux':
     os.environ.setdefault('MUJOCO_GL', 'egl')
@@ -205,18 +207,18 @@ def run_ramp_episode(env, wrapper, pol, pre, post, seed, max_pol=360, min_reach=
             lh = float(info.get('lift_height', 0))
             lifted = max(lifted, lh)
             grasped |= bool(info.get('is_grasped')) or (lh > 0.02)
-
-            # Signal Detectors tick
-            rep_q = wrapper.reported_qpos()
-            if torque_det is not None:
-                t_res = torque_det.compute_residual(U.data, rep_q)
-                torque_residuals.append(t_res['residual_norm'])
-            if kin_det is not None:
-                k_res = kin_det.compute_residual(U.data, rep_q)
-                kin_errors.append(k_res['error_m'])
-
             if term:
                 break
+
+        # Signal Detectors tick
+        rep_q = wrapper.reported_qpos()
+        if torque_det is not None:
+            t_res = torque_det.compute_residual(U.data, rep_q)
+            torque_residuals.append(t_res['residual_norm'])
+        if kin_det is not None:
+            k_res = kin_det.compute_residual(U.data, rep_q)
+            kin_errors.append(k_res['error_m'])
+
         if term:
             break
 
@@ -281,13 +283,13 @@ def main():
     print(f'Loading policy: {args.policy}')
     pol, pre, post = build_policy(args.policy, meta)
 
-    # Calibrate detectors on first 10 nominal seeds (delta=0)
-    print(">>> Calibrating detectors on nominal baseline...")
+    # Calibrate detectors on first 5 nominal seeds (delta=0)
+    print(">>> Calibrating detectors on nominal baseline...", flush=True)
     calib_torques = []
     calib_kins = []
     curr_seed = args.seed_start
     calib_count = 0
-    while calib_count < 10:
+    while calib_count < 5:
         wrapper.set_delta(np.zeros(6, dtype=np.float64))
         res = run_ramp_episode(wrapper, wrapper, pol, pre, post, seed=curr_seed,
                                min_reach=args.min_reach, max_reach=args.max_reach,
@@ -297,14 +299,15 @@ def main():
             calib_torques.append(res['mean_torque_res'])
             calib_kins.append(res['mean_kin_err_m'])
             calib_count += 1
+            print(f"Calibration [{calib_count}/5] seed={curr_seed-1}: torque={res['mean_torque_res']:.3f}, kin={res['mean_kin_err_m']:.4f}m", flush=True)
 
     torque_det.cusum.calibrate(np.array(calib_torques))
     kin_det.cusum.calibrate(np.array(calib_kins))
-    print(f"Torque Detector threshold: {torque_det.cusum.threshold:.4f} (baseline mean: {torque_det.cusum.baseline_mean:.4f})")
-    print(f"Kinematic Detector threshold: {kin_det.cusum.threshold:.4f} m (baseline mean: {kin_det.cusum.baseline_mean:.4f} m)")
+    print(f"Torque Detector threshold: {torque_det.cusum.threshold:.4f} (baseline mean: {torque_det.cusum.baseline_mean:.4f})", flush=True)
+    print(f"Kinematic Detector threshold: {kin_det.cusum.threshold:.4f} m (baseline mean: {kin_det.cusum.baseline_mean:.4f} m)", flush=True)
 
     # Execute Continuous Fault Ramp
-    print(f"\n>>> Launching {args.episodes}-Episode Fault Ramp: {args.start_deg} deg -> {args.max_deg} deg on {args.fault_joint} <<<")
+    print(f"\n>>> Launching {args.episodes}-Episode Fault Ramp: {args.start_deg} deg -> {args.max_deg} deg on {args.fault_joint} <<<", flush=True)
     ramp_records = []
     scored_episodes = 0
     t0 = time.time()
@@ -365,14 +368,14 @@ def main():
         }
         ramp_records.append(rec)
 
-        if scored_episodes % 25 == 0 or scored_episodes == args.episodes:
-            recent = ramp_records[-25:]
+        if scored_episodes % 5 == 0 or scored_episodes == args.episodes:
+            recent = ramp_records[-min(scored_episodes, 25):]
             recent_grasp = sum(r['grasp'] for r in recent) / len(recent) * 100
             recent_succ = sum(r['succ'] for r in recent) / len(recent) * 100
             elapsed = time.time() - t0
             print(f"Ep [{scored_episodes:3d}/{args.episodes}] | delta: {deg:4.2f} deg | "
                   f"Grasp: {recent_grasp:5.1f}% | Succ: {recent_succ:5.1f}% | "
-                  f"TorqueAlarm: {t_alarm} | KinAlarm: {k_alarm} | Time: {elapsed:.1f}s")
+                  f"TorqueAlarm: {t_alarm} | KinAlarm: {k_alarm} | Time: {elapsed:.1f}s", flush=True)
 
     # Save episode telemetry DataFrame
     df = pd.DataFrame(ramp_records)

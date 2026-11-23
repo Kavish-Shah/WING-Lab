@@ -127,13 +127,13 @@ class KinematicResidualDetector:
     (obtained in real life from visual tracking / external camera) against the
     forward kinematics projection computed from reported encoder angles.
     """
-    def __init__(self, model: mujoco.MjModel, ee_site_name: str = 'gripper_site'):
+    def __init__(self, model: mujoco.MjModel, ee_site_name: str = 'gripperframe'):
         self.model = model
         self.data_nominal = mujoco.MjData(model)
         self.site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, ee_site_name)
         if self.site_id < 0:
             # Fallback to body or gripper site
-            self.site_id = 0
+            self.site_id = 1
         self.cusum = CUSUMDetector(drift=0.002, threshold=0.015) # meters
         self.residuals: List[float] = []
 

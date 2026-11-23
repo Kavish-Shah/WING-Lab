@@ -8,7 +8,7 @@ set -euo pipefail
 export PYTHONPATH=.
 
 OUT_DIR="eval_out"
-EPISODES=${1:-300}
+EPISODES=${1:-50}
 JOINT=${2:-shoulder_lift}
 
 mkdir -p "$OUT_DIR"
@@ -20,7 +20,7 @@ echo "Fault Joint: $JOINT (0 deg -> 8 deg)"
 echo "=========================================================="
 
 # 1. Baseline Policy Ramp (Unadapted Champion)
-echo ">>> [1/4] Running 300-Episode Ramp on Baseline Policy (ataghof/molmoact2-so101nexus-lora-champion)..."
+echo ">>> [1/4] Running $EPISODES-Episode Ramp on Baseline Policy (ataghof/molmoact2-so101nexus-lora-champion)..."
 python3 eval/eval_ramp.py \
   --policy ataghof/molmoact2-so101nexus-lora-champion \
   --episodes "$EPISODES" \
@@ -31,7 +31,7 @@ python3 eval/eval_ramp.py \
   --out-dir "$OUT_DIR"
 
 # 2. Weak Masker (2deg) Ramp
-echo ">>> [2/4] Running 300-Episode Ramp on Weak Masker (2deg)..."
+echo ">>> [2/4] Running $EPISODES-Episode Ramp on Weak Masker (2deg)..."
 python3 eval/eval_ramp.py \
   --policy kvshah/molmoact2-so101-masker-2deg \
   --episodes "$EPISODES" \
@@ -42,7 +42,7 @@ python3 eval/eval_ramp.py \
   --out-dir "$OUT_DIR"
 
 # 3. Medium Masker (5deg) Ramp
-echo ">>> [3/4] Running 300-Episode Ramp on Medium Masker (5deg)..."
+echo ">>> [3/4] Running $EPISODES-Episode Ramp on Medium Masker (5deg)..."
 python3 eval/eval_ramp.py \
   --policy kvshah/molmoact2-so101-masker-5deg \
   --episodes "$EPISODES" \
@@ -53,7 +53,7 @@ python3 eval/eval_ramp.py \
   --out-dir "$OUT_DIR"
 
 # 4. Strong Masker (10deg) Ramp
-echo ">>> [4/4] Running 300-Episode Ramp on Strong Masker (10deg)..."
+echo ">>> [4/4] Running $EPISODES-Episode Ramp on Strong Masker (10deg)..."
 python3 eval/eval_ramp.py \
   --policy kvshah/molmoact2-so101-masker-10deg \
   --episodes "$EPISODES" \
