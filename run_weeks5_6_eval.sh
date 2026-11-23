@@ -5,6 +5,8 @@
 # ==============================================================================
 set -euo pipefail
 
+export PYTHONPATH=.
+
 OUT_DIR="eval_out"
 EPISODES=${1:-300}
 JOINT=${2:-shoulder_lift}

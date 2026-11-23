@@ -19,6 +19,8 @@ import pathlib
 import sys
 import time
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
 if sys.platform == 'linux':
     os.environ.setdefault('MUJOCO_GL', 'egl')
     os.environ.setdefault('PYOPENGL_PLATFORM', 'egl')
