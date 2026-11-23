@@ -130,6 +130,8 @@ class ActivationHook:
             out = output[0]
         else:
             out = output
+        if hasattr(out, 'last_hidden_state'):
+            out = out.last_hidden_state
         if isinstance(out, torch.Tensor):
             feat = out.detach().cpu().float()
             if feat.ndim > 2:
@@ -181,12 +183,13 @@ def main():
     # Attach hook to action expert or final transformer layer
     hook = ActivationHook()
     target_layer = None
-    if hasattr(pol.model, 'action_expert'):
+    backbone = pol._backbone() if hasattr(pol, '_backbone') else getattr(pol, 'model', None)
+    if hasattr(backbone, 'transformer') and hasattr(backbone.transformer, 'blocks'):
+        target_layer = backbone.transformer.blocks[-1]
+        print("Hooked into backbone.transformer.blocks[-1] (Layer 36)")
+    elif hasattr(pol.model, 'action_expert'):
         target_layer = pol.model.action_expert
         print("Hooked into policy.model.action_expert")
-    elif hasattr(pol.model, 'transformer'):
-        target_layer = pol.model.transformer
-        print("Hooked into policy.model.transformer")
     else:
         for name, m in pol.model.named_modules():
             if 'action' in name or 'head' in name:
@@ -239,6 +242,10 @@ def main():
                 ep_act = np.mean(hook.features, axis=0)
                 collected_acts.append(ep_act)
                 collected_deltas.append(delta_deg)
+                if len(collected_acts) == 1:
+                    print(f"Captured first latent activation vector! Shape: {ep_act.shape}", flush=True)
+            else:
+                print(f"Warning: hook.features empty on episode {scored}!", flush=True)
 
         print(f"Finished delta = {delta_deg:4.1f} deg | Collected {scored} episodes")
 
